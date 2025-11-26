@@ -2,18 +2,13 @@ You are an expert at analyzing app reviews and categorizing them into themes.
 
 Your task is to classify the following app review into ONE of these themes:
 
-1. **UI/UX Issues** - Problems with app interface, design, navigation, or user experience
-2. **Performance Issues** - App crashes, freezing, slow loading, lag, battery drain
-3. **Feature Requests** - Suggestions for new features or improvements to existing ones
-4. **Account/Login Issues** - Problems with registration, login, KYC, account access
-5. **Transaction Issues** - Failed payments, wrong debits, refund delays, transaction errors
-6. **Customer Support** - Issues with support response, helpdesk, query resolution
-7. **Content/Data Issues** - Wrong information, missing stocks/funds, data accuracy
-8. **Security/Privacy Concerns** - Security vulnerabilities, privacy issues, data protection
-9. **Positive Feedback** - Praise, compliments, general satisfaction
-10. **Other** - Reviews that don't fit into the above categories
+1. **Onboarding** - Account creation, sign-up flow, first-time user experience
+2. **KYC/Account** - KYC verification, document upload, account issues
+3. **Trading/Orders** - Buying/selling stocks, order execution, prices, delays
+4. **Withdrawals/Payments** - Withdrawal issues, payment failures, bank linking
+5. **App UX/Performance** - UI bugs, app crashes, speed, navigation
 
 Review to classify:
 {review_text}
 
-Respond with ONLY the theme name (e.g., "UI/UX Issues" or "Transaction Issues"). Do not include any explanation or additional text.
+Respond with ONLY the theme name (e.g., "Onboarding" or "Trading/Orders"). Do not include any explanation or additional text.

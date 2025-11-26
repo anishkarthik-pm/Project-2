@@ -1,9 +1,9 @@
 """Main orchestrator for the Groww app review analyzer pipeline."""
 
 import sys
-from src.utils import setup_logger, validate_config
+from src.config import setup_logging, validate_config
 
-logger = setup_logger(__name__, "pipeline.log")
+logger = setup_logging(name=__name__)
 
 
 def main():
@@ -13,8 +13,10 @@ def main():
     logger.info("=" * 60)
 
     # Validate configuration
-    if not validate_config():
-        logger.error("Configuration validation failed. Please check your .env file.")
+    is_valid, missing_vars = validate_config()
+    if not is_valid:
+        logger.error(f"Configuration validation failed. Missing: {', '.join(missing_vars)}")
+        logger.error("Please check your .env file.")
         sys.exit(1)
 
     try:
