@@ -2,66 +2,41 @@ name: Weekly App Review Pulse
 
 on:
   schedule:
-    # Runs every Monday at 9:00 AM IST (3:30 AM UTC)
-    - cron: '30 3 * * 1'
-
-  # Allow manual trigger for testing
-  workflow_dispatch:
+    - cron: '30 3 * * 1'   # 9:00 AM IST Monday (03:30 UTC)
+  workflow_dispatch:       # manual trigger
 
 jobs:
-  analyze-reviews:
+  run-analysis:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Create required directories
+      - name: Create .env file
         run: |
-          mkdir -p data/raw data/processed outputs/notes outputs/emails logs
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+          echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+          echo "EMAIL_TO=${{ secrets.EMAIL_TO }}" >> .env
 
-      - name: Run review analysis pipeline
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-        run: |
-          python main.py
+      - name: Run weekly pipeline
+        run: python main.py
 
-      - name: Upload artifacts
+      - name: Upload outputs
         uses: actions/upload-artifact@v3
-        if: always()
         with:
-          name: review-analysis-outputs
+          name: results
           path: |
             outputs/
             logs/
-          retention-days: 30
-
-      - name: Upload logs on failure
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: error-logs
-          path: logs/
-          retention-days: 90
