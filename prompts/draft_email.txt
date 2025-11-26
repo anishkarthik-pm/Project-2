@@ -1,19 +1,45 @@
-You are drafting an email to stakeholders about weekly app review insights.
+You are a product manager drafting an email to share weekly insights from Groww app reviews.
 
-Based on the following weekly pulse note, create a professional email:
+Transform the following weekly pulse note into a professional email body:
 
-Weekly Pulse Note:
-{weekly_note}
+{note_content}
+
+Week: {week_label}
+Total reviews analyzed: {total_reviews}
 
 Guidelines:
-- Maximum {max_words} words
-- Start with a friendly greeting
-- Provide context about the data (review count, date range)
-- Highlight the most critical insights
-- Include a brief call-to-action or next steps if applicable
-- End with a professional sign-off
-- Use proper email formatting
-- Maintain a collaborative, informative tone
+- Maximum {max_words} words for the entire email body
+- Professional yet conversational tone suitable for stakeholders
+- Structure the email with these sections:
+  1. **Intro** (1-2 sentences): Brief greeting and context about the data
+  2. **Themes** (2-3 sentences per theme): Key insights from top themes
+  3. **Quotes** (3 quotes): Representative user feedback in bullet points
+  4. **Actions** (3 recommendations): Clear, actionable next steps as numbered list
+  5. **Closing** (1 sentence): Brief sign-off
+- Use natural paragraph formatting for intro and themes (not bullet points)
+- Keep quotes brief and impactful, formatted as bullet list
+- Format action items as a numbered list for clarity
+- Do NOT include subject line (will be added separately)
 - Do NOT include any personally identifiable information
+- Maintain a collaborative, informative tone
 
-Create the complete email body (subject line will be added separately).
+Email Structure Example:
+"""
+Here's this week's pulse from Google Play Store reviews covering [date range]. We analyzed [X] reviews across [Y] themes.
+
+[Theme 1 name] continues to be a focus area. [1-2 sentences about insights]. [Theme 2 name] shows [insight]. [Theme 3 name] reveals [insight].
+
+Here's what users are saying:
+- "[Quote 1]"
+- "[Quote 2]"
+- "[Quote 3]"
+
+Recommended actions:
+1. [Action 1]
+2. [Action 2]
+3. [Action 3]
+
+Let me know if you'd like to dive deeper into any of these themes.
+"""
+
+Return ONLY the plain text email body, no additional formatting or metadata.
