@@ -5,9 +5,9 @@ Automated weekly analysis of Groww app reviews from Google Play Store using AI-p
 ## Features
 
 - **Automated Review Scraping**: Fetches latest reviews from Google Play Store
-- **AI Theme Classification**: Uses Google Gemini API to categorize reviews into 10 predefined themes
-- **Intelligent Summarization**: Generates concise weekly pulse notes highlighting key insights
-- **Email Notifications**: Automatically drafts and sends stakeholder emails
+- **AI Theme Classification**: Uses Google Gemini Flash API to categorize reviews into 5 predefined themes
+- **Intelligent Summarization**: Generates concise weekly pulse notes (≤250 words) using Gemini Pro
+- **Email Notifications**: Automatically drafts (≤350 words) and sends stakeholder emails via Gmail SMTP
 - **PII Protection**: Removes personally identifiable information from all outputs
 - **Scheduled Execution**: Runs every Monday at 9 AM IST via GitHub Actions
 
@@ -60,18 +60,41 @@ groww-review-analyzer/
 
    Edit `.env` and add your credentials:
    - `GEMINI_API_KEY`: Your Google Gemini API key
-   - `SMTP_USERNAME`: Your Gmail address
-   - `SMTP_PASSWORD`: Your Gmail app-specific password
-   - `EMAIL_TO`: Comma-separated recipient emails
+   - `EMAIL_FROM`: Your Gmail address
+   - `EMAIL_PASSWORD`: Your Gmail App Password (see below)
+   - `EMAIL_TO`: Recipient email address
+
+### Gmail App Password Setup
+
+**Important**: You must use a Gmail App Password, not your regular Gmail password.
+
+1. **Enable 2-Step Verification**:
+   - Go to [Google Account Security](https://myaccount.google.com/security)
+   - Under "Signing in to Google", click "2-Step Verification"
+   - Follow the prompts to enable it (required for App Passwords)
+
+2. **Generate App Password**:
+   - After enabling 2-Step Verification, return to Security settings
+   - Under "Signing in to Google", click "App Passwords"
+   - Select "Mail" as the app and "Other" as the device
+   - Enter "Groww Review Analyzer" as the device name
+   - Click "Generate"
+   - Copy the 16-character password (format: `xxxx xxxx xxxx xxxx`)
+
+3. **Add to .env file**:
+   ```
+   EMAIL_PASSWORD=your16charpassword  # Remove spaces
+   ```
+
+**Note**: App Passwords can only be generated if 2-Step Verification is enabled on your Google account.
 
 ### GitHub Actions Setup
 
 1. **Add repository secrets** (Settings → Secrets → Actions):
-   - `GEMINI_API_KEY`
-   - `SMTP_USERNAME`
-   - `SMTP_PASSWORD`
-   - `EMAIL_FROM`
-   - `EMAIL_TO`
+   - `GEMINI_API_KEY` - Your Google Gemini API key
+   - `EMAIL_FROM` - Your Gmail address
+   - `EMAIL_PASSWORD` - Your Gmail App Password (16 characters, no spaces)
+   - `EMAIL_TO` - Recipient email address
 
 2. **Enable GitHub Actions** in your repository settings
 
@@ -187,16 +210,13 @@ Here's this week's app review pulse...
 
 ## Theme Categories
 
-1. UI/UX Issues
-2. Performance Issues
-3. Feature Requests
-4. Account/Login Issues
-5. Transaction Issues
-6. Customer Support
-7. Content/Data Issues
-8. Security/Privacy Concerns
-9. Positive Feedback
-10. Other
+The analyzer classifies reviews into 5 predefined themes:
+
+1. **Onboarding** - Account creation, sign-up flow, first-time user experience
+2. **KYC/Account** - KYC verification, document upload, account-related issues
+3. **Trading/Orders** - Buying/selling stocks, order execution, prices, delays
+4. **Withdrawals/Payments** - Withdrawal issues, payment failures, bank linking
+5. **App UX/Performance** - UI bugs, app crashes, speed, navigation issues
 
 ## Privacy & Security
 
@@ -211,8 +231,12 @@ Here's this week's app review pulse...
 - Verify API credentials are valid
 
 **Email not sending:**
-- Ensure Gmail app-specific password is used (not regular password)
-- Check SMTP settings and port (587 for TLS)
+- Use Gmail App Password, not your regular Google password
+- Ensure 2-Step Verification is enabled on your Google account
+- Verify EMAIL_FROM, EMAIL_PASSWORD, and EMAIL_TO are set in .env
+- Check SMTP settings: smtp.gmail.com:465 (SSL)
+- Test with dry-run mode: `python src/05_send_email.py --dry-run`
+- Check logs/email_sent.log for delivery status
 
 **Theme classification errors:**
 - Verify Gemini API key has sufficient quota

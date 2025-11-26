@@ -13,9 +13,9 @@ import google.generativeai as genai
 from src.config import (
     GEMINI_API_KEY,
     GEMINI_PRO_MODEL,
-    MAX_EMAIL_WORDS,
-    NOTES_OUTPUT_DIR,
-    EMAILS_OUTPUT_DIR,
+    EMAIL_DRAFT_MAX_WORDS,
+    NOTES_DIR,
+    EMAILS_DIR,
     PROMPTS_DIR,
     setup_logging,
 )
@@ -109,10 +109,10 @@ def get_latest_note_file() -> Path:
     Raises:
         FileNotFoundError: If no note files found
     """
-    json_files = sorted(NOTES_OUTPUT_DIR.glob("weekly_pulse_*.json"))
+    json_files = sorted(NOTES_DIR.glob("weekly_pulse_*.json"))
 
     if not json_files:
-        raise FileNotFoundError(f"No note files found in {NOTES_OUTPUT_DIR}")
+        raise FileNotFoundError(f"No note files found in {NOTES_DIR}")
 
     latest_file = json_files[-1]
     logger.info(f"Found latest note file: {latest_file}")
@@ -153,7 +153,7 @@ def load_note_data(file_path: Path) -> Dict[str, Any]:
 def build_email_prompt(
     prompt_template: str,
     note_data: Dict[str, Any],
-    max_words: int = MAX_EMAIL_WORDS
+    max_words: int = EMAIL_DRAFT_MAX_WORDS
 ) -> str:
     """
     Build email generation prompt from template and note data.
@@ -322,7 +322,7 @@ def validate_email_structure(email_text: str) -> Dict[str, bool]:
 def enforce_word_limit(
     model: genai.GenerativeModel,
     email_text: str,
-    max_words: int = MAX_EMAIL_WORDS
+    max_words: int = EMAIL_DRAFT_MAX_WORDS
 ) -> str:
     """
     Ensure email body does not exceed word limit.
@@ -664,13 +664,13 @@ def main():
             # Step 5: Enforce word limit
             log_pipeline_step(logger, "Enforce Word Limit", "START")
             with Timer() as t:
-                email_body = enforce_word_limit(model, email_body, MAX_EMAIL_WORDS)
+                email_body = enforce_word_limit(model, email_body, EMAIL_DRAFT_MAX_WORDS)
                 final_word_count = count_words(email_body)
 
             log_pipeline_step(
                 logger, "Enforce Word Limit", "SUCCESS",
                 duration=t.duration,
-                metadata={"final_word_count": final_word_count, "limit": MAX_EMAIL_WORDS}
+                metadata={"final_word_count": final_word_count, "limit": EMAIL_DRAFT_MAX_WORDS}
             )
 
             # Step 6: Generate subject line
@@ -705,7 +705,7 @@ def main():
             else:
                 # Save mode
                 today_str = datetime.now().strftime("%Y-%m-%d")
-                output_path = EMAILS_OUTPUT_DIR / f"email_draft_{today_str}.txt"
+                output_path = EMAILS_DIR / f"email_draft_{today_str}.txt"
 
                 log_pipeline_step(logger, "Save Email Draft", "START")
                 with Timer() as t:
@@ -718,7 +718,7 @@ def main():
                 )
 
                 print(f"\nEmail draft saved to: {output_path}")
-                print(f"Word count: {final_word_count}/{MAX_EMAIL_WORDS} words")
+                print(f"Word count: {final_word_count}/{EMAIL_DRAFT_MAX_WORDS} words")
 
         except Exception as e:
             logger.error(f"Email draft generation failed: {str(e)}", exc_info=True)
