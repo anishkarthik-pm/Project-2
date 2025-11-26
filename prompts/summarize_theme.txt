@@ -6,10 +6,25 @@ Reviews:
 {reviews_text}
 
 Guidelines:
-- Create a 2-3 sentence summary capturing the main pain points or feedback
-- Focus on actionable insights and patterns
-- Use specific examples where relevant
-- Keep the tone professional and objective
+- Identify 2-4 key pain points or patterns in these reviews
+- Extract 2-3 representative quotes that best capture user sentiment
+- Focus on actionable insights
+- Keep tone professional and objective
 - Do NOT include any personally identifiable information (names, emails, phone numbers)
 
-Provide only the summary, no additional commentary.
+Return your analysis as JSON:
+{{
+  "theme": "{theme_name}",
+  "key_points": [
+    "Main pain point or pattern 1",
+    "Main pain point or pattern 2",
+    "Main pain point or pattern 3"
+  ],
+  "candidate_quotes": [
+    "Quote from a review that exemplifies the theme",
+    "Another representative quote",
+    "Third representative quote"
+  ]
+}}
+
+Respond with ONLY the JSON object, no additional text.

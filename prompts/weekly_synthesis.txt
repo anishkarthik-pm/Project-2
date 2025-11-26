@@ -4,23 +4,46 @@ Create a concise weekly summary based on the following theme summaries:
 
 {theme_summaries}
 
+Week: {week_label}
+
 Guidelines:
-- Maximum {max_words} words
-- Start with a brief overview sentence
-- Present the top {top_themes} themes with key insights
-- Use bullet points for clarity
-- Focus on actionable insights
+- Maximum {max_words} words in the final markdown output
+- Create an engaging title for the week
+- Write a brief overview (2-3 sentences) of the overall user sentiment
+- Summarize each of the {top_themes} themes concisely
+- Select 3 most impactful user quotes from the candidate quotes provided
+- Generate 3 actionable recommendations based on the insights
 - Maintain a professional, analytical tone
 - Do NOT include any personally identifiable information
 
-Format:
-📊 Weekly Review Pulse - [Date Range]
+Return your summary as JSON:
+{{
+  "title": "Engaging title for this week's pulse (e.g., 'Week of KYC Challenges and Trading Wins')",
+  "overview": "2-3 sentence overview of overall user sentiment and key patterns this week",
+  "themes": [
+    {{
+      "name": "Theme Name 1",
+      "summary": "One sentence summary of this theme's insights"
+    }},
+    {{
+      "name": "Theme Name 2",
+      "summary": "One sentence summary of this theme's insights"
+    }},
+    {{
+      "name": "Theme Name 3",
+      "summary": "One sentence summary of this theme's insights"
+    }}
+  ],
+  "quotes": [
+    "First impactful user quote",
+    "Second impactful user quote",
+    "Third impactful user quote"
+  ],
+  "actions": [
+    "First actionable recommendation",
+    "Second actionable recommendation",
+    "Third actionable recommendation"
+  ]
+}}
 
-[Overview sentence]
-
-Top Themes:
-• **Theme 1**: [Key insight]
-• **Theme 2**: [Key insight]
-• **Theme 3**: [Key insight]
-
-Key Takeaway: [One sentence summary]
+Respond with ONLY the JSON object, no additional text.
