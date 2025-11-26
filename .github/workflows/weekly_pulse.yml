@@ -2,8 +2,8 @@ name: Weekly App Review Pulse
 
 on:
   schedule:
-    - cron: '30 3 * * 1'   # 9:00 AM IST Monday (03:30 UTC)
-  workflow_dispatch:       # manual trigger
+    - cron: '30 3 * * 1'   # 9:00 AM IST Monday
+  workflow_dispatch:
 
 jobs:
   run-analysis:
@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
@@ -34,7 +34,7 @@ jobs:
         run: python main.py
 
       - name: Upload outputs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: results
           path: |
