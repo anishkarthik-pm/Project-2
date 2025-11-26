@@ -1,0 +1,11 @@
+review_id,author,rating,date,content
+1,user1,5,2024-01-15,"Excellent app for investing! Easy to use and very intuitive interface."
+2,user2,1,2024-01-16,"App keeps crashing when I try to buy stocks. Very frustrating experience."
+3,user3,4,2024-01-17,"Good app but needs dark mode. My eyes hurt using it at night."
+4,user4,2,2024-01-18,"KYC verification has been pending for 2 weeks. Customer support not responding."
+5,user5,5,2024-01-19,"Best investment platform in India. Seamless experience and great features."
+6,user6,1,2024-01-20,"Payment deducted twice but order not placed. Still waiting for refund."
+7,user7,3,2024-01-21,"App is okay but loads very slowly. Takes forever to open stock details."
+8,user8,4,2024-01-22,"Love the mutual fund recommendations. Would be great to have SIP autopay."
+9,user9,2,2024-01-23,"Login fails randomly. Have to reinstall app every time this happens."
+10,user10,5,2024-01-24,"Amazing UI and smooth transactions. Never faced any issues."

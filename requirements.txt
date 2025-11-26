@@ -1,0 +1,16 @@
+# Core dependencies
+google-play-scraper==1.2.7
+python-dotenv==1.0.0
+
+# Google Gemini API
+google-generativeai==0.3.2
+
+# Data processing
+pandas==2.1.4
+
+# Retry logic
+tenacity==8.2.3
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0

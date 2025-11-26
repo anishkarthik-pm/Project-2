@@ -1,0 +1,19 @@
+You are drafting an email to stakeholders about weekly app review insights.
+
+Based on the following weekly pulse note, create a professional email:
+
+Weekly Pulse Note:
+{weekly_note}
+
+Guidelines:
+- Maximum {max_words} words
+- Start with a friendly greeting
+- Provide context about the data (review count, date range)
+- Highlight the most critical insights
+- Include a brief call-to-action or next steps if applicable
+- End with a professional sign-off
+- Use proper email formatting
+- Maintain a collaborative, informative tone
+- Do NOT include any personally identifiable information
+
+Create the complete email body (subject line will be added separately).

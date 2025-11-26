@@ -1,0 +1,15 @@
+You are an expert at analyzing app reviews and creating concise summaries.
+
+Your task is to summarize the key insights from the following reviews, all categorized under the theme: **{theme_name}**
+
+Reviews:
+{reviews_text}
+
+Guidelines:
+- Create a 2-3 sentence summary capturing the main pain points or feedback
+- Focus on actionable insights and patterns
+- Use specific examples where relevant
+- Keep the tone professional and objective
+- Do NOT include any personally identifiable information (names, emails, phone numbers)
+
+Provide only the summary, no additional commentary.
