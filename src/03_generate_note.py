@@ -116,21 +116,18 @@ def get_latest_themed_file() -> Path:
 
 def get_last_complete_week() -> Tuple[datetime, datetime]:
     """
-    Get start and end dates of last complete week (Monday-Sunday).
+    Get start and end dates of last 7 days (matching review import period).
 
     Returns:
         Tuple of (week_start, week_end) datetime objects
     """
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    # Get last Monday
-    days_since_monday = today.weekday()
-    last_monday = today - timedelta(days=days_since_monday + 7)
+    # Get reviews from last 7 days (matching 01_import_reviews.py)
+    week_start = today - timedelta(days=7)
+    week_end = today.replace(hour=23, minute=59, second=59)
 
-    # Get last Sunday (6 days after last Monday)
-    last_sunday = last_monday + timedelta(days=6, hours=23, minutes=59, seconds=59)
-
-    return last_monday, last_sunday
+    return week_start, week_end
 
 
 def load_and_filter_reviews(
