@@ -133,7 +133,8 @@ def get_last_complete_week() -> Tuple[datetime, datetime]:
 def load_and_filter_reviews(
     file_path: Path,
     week_start: datetime,
-    week_end: datetime
+    week_end: datetime,
+    skip_date_filter: bool = False
 ) -> pd.DataFrame:
     """
     Load reviews and filter by week range.
@@ -142,6 +143,7 @@ def load_and_filter_reviews(
         file_path: Path to themed CSV file
         week_start: Week start date
         week_end: Week end date
+        skip_date_filter: If True, skip date filtering (useful for sample data)
 
     Returns:
         Filtered DataFrame
@@ -151,10 +153,12 @@ def load_and_filter_reviews(
     # Convert date column to datetime
     df['date'] = pd.to_datetime(df['date'])
 
-    # Filter by date range
-    df = df[(df['date'] >= week_start) & (df['date'] <= week_end)]
-
-    logger.info(f"Loaded {len(df)} reviews for week {week_start.date()} to {week_end.date()}")
+    # Filter by date range (unless skipped)
+    if not skip_date_filter:
+        df = df[(df['date'] >= week_start) & (df['date'] <= week_end)]
+        logger.info(f"Loaded {len(df)} reviews for week {week_start.date()} to {week_end.date()}")
+    else:
+        logger.info(f"Loaded {len(df)} reviews (date filtering disabled)")
 
     return df
 
@@ -589,6 +593,11 @@ def main():
         type=str,
         help='Week end date (ISO format: YYYY-MM-DD)'
     )
+    parser.add_argument(
+        '--no-date-filter',
+        action='store_true',
+        help='Use all reviews regardless of date (useful for testing with sample data)'
+    )
 
     args = parser.parse_args()
 
@@ -611,7 +620,7 @@ def main():
             log_pipeline_step(logger, "Load Reviews", "START")
             with Timer() as t:
                 input_path = get_latest_themed_file()
-                df = load_and_filter_reviews(input_path, week_start, week_end)
+                df = load_and_filter_reviews(input_path, week_start, week_end, skip_date_filter=args.no_date_filter)
 
             if df.empty:
                 logger.warning("No reviews found for the specified week")
