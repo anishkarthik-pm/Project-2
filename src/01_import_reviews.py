@@ -60,14 +60,14 @@ def fetch_reviews(
             logger.info(f"Fetching reviews from Google Play Store (attempt {attempt}/{max_retries})...")
             logger.info(f"App ID: {app_id}, Language: {lang}, Country: {country}")
 
-            # Fetch all reviews with NEWEST sort
+            # Fetch reviews sorted by MOST_RELEVANT to get quality reviews
             with Timer() as t:
                 reviews = reviews_all(
                     app_id,
                     sleep_milliseconds=0,
                     lang=lang,
                     country=country,
-                    sort=Sort.NEWEST
+                    sort=Sort.MOST_RELEVANT
                 )
 
             logger.info(f"Fetched {len(reviews)} reviews in {t.duration:.2f}s")
@@ -223,17 +223,21 @@ def clean_review_text(text: str) -> str:
 
 def process_reviews(
     reviews: List[Dict[str, Any]],
-    weeks_back: int
+    weeks_back: int = 1
 ) -> pd.DataFrame:
     """
     Process raw reviews into cleaned DataFrame.
 
+    Filters reviews to include only those from the last 1 week (7 days).
+    The weeks_back parameter is kept for backward compatibility but
+    the actual filtering is hardcoded to 1 week for most relevant reviews.
+
     Args:
         reviews: List of review dictionaries from google_play_scraper
-        weeks_back: Number of weeks to look back from today
+        weeks_back: Number of weeks to look back (ignored, defaults to 1 week)
 
     Returns:
-        Cleaned DataFrame with filtered reviews
+        Cleaned DataFrame with reviews from the last 1 week
     """
     logger.info("Processing reviews...")
 
@@ -266,14 +270,15 @@ def process_reviews(
     df = df[df['text'].str.strip() != '']
     logger.info(f"After removing empty reviews: {len(df)}")
 
-    # Filter by date range
+    # Filter by date range - get reviews from the last 1 week (7 days)
     today = datetime.now()
-    start_date = today - timedelta(weeks=weeks_back)
-    end_date = today - timedelta(days=7)  # Exclude last 7 days
+    start_date = today - timedelta(days=7)  # Start from 7 days ago
+    end_date = today  # Up to today
 
     df = df[df['date'] >= start_date]
     df = df[df['date'] <= end_date]
 
+    logger.info(f"Fetching reviews from the last 1 week")
     logger.info(f"Date range: {start_date.date()} to {end_date.date()}")
     logger.info(f"After date filtering: {len(df)}")
 
@@ -344,13 +349,13 @@ def print_summary(df: pd.DataFrame) -> None:
 def main():
     """Main execution function."""
     parser = argparse.ArgumentParser(
-        description='Import and clean Groww app reviews from Google Play Store'
+        description='Import and clean Groww app reviews from Google Play Store (last 1 week)'
     )
     parser.add_argument(
         '--weeks-back',
         type=int,
-        default=12,
-        help='Number of weeks to look back (default: 12)'
+        default=1,
+        help='Number of weeks to look back (default: 1, hardcoded to last 7 days for most relevant reviews)'
     )
 
     args = parser.parse_args()
@@ -390,7 +395,7 @@ def main():
             )
 
             if df.empty:
-                logger.warning(f"No reviews found in the last {args.weeks_back} weeks!")
+                logger.warning("No reviews found in the last 1 week!")
                 return
 
             # Step 3: Save to CSV
