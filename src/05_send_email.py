@@ -492,15 +492,15 @@ def main():
 
                     # Preview email
                     preview_email(message, credentials)
-                    print("✓ SMTP credentials validated")
-                    print("✓ Email would be sent successfully")
+                    print("[OK] SMTP credentials validated")
+                    print("[OK] Email would be sent successfully")
 
                 else:
                     log_pipeline_step(
                         logger, "Validate SMTP Credentials", "FAILED",
                         duration=t.duration
                     )
-                    print("✗ SMTP credentials validation failed")
+                    print("[FAIL] SMTP credentials validation failed")
                     print("  Check logs for details")
 
             else:
@@ -527,7 +527,7 @@ def main():
                         status="SUCCESS"
                     )
 
-                    print(f"\n✓ Email sent successfully to {credentials['email_to']}")
+                    print(f"\n[SUCCESS] Email sent successfully to {credentials['email_to']}")
                     print(f"  Subject: {subject}")
 
                 else:
@@ -544,7 +544,7 @@ def main():
                         error=error
                     )
 
-                    print(f"\n✗ Email sending failed: {error}")
+                    print(f"\n[FAIL] Email sending failed: {error}")
                     raise Exception(f"Email delivery failed: {error}")
 
         except Exception as e:

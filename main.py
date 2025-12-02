@@ -138,19 +138,8 @@ def run_step(
                 for line in result.stdout.strip().split('\n'):
                     logger.info(f"  {line}")
 
-            logger.info(f"✓ Step {step_num} completed successfully in {t.duration:.2f}s")
-
-            return {
-                "step": step_num,
-                "name": step_name,
-                "status": "success",
-                "duration": t.duration,
-                "stdout": result.stdout,
-                "stderr": result.stderr
-            }
-
         except subprocess.CalledProcessError as e:
-            logger.error(f"✗ Step {step_num} failed with exit code {e.returncode}")
+            logger.error(f"[FAIL] Step {step_num} failed with exit code {e.returncode}")
             logger.error("STDOUT:")
             logger.error(e.stdout)
             logger.error("STDERR:")
@@ -162,12 +151,24 @@ def run_step(
             )
 
         except subprocess.TimeoutExpired:
-            logger.error(f"✗ Step {step_num} timed out after 10 minutes")
+            logger.error(f"[FAIL] Step {step_num} timed out after 10 minutes")
             raise PipelineError(f"Step {step_num} ({step_name}) timed out")
 
         except Exception as e:
-            logger.error(f"✗ Step {step_num} failed with unexpected error: {str(e)}")
+            logger.error(f"[FAIL] Step {step_num} failed with unexpected error: {str(e)}")
             raise PipelineError(f"Step {step_num} ({step_name}) failed: {str(e)}")
+
+    # Timer context exited - now t.duration is available
+    logger.info(f"[SUCCESS] Step {step_num} completed in {t.duration:.2f}s")
+
+    return {
+        "step": step_num,
+        "name": step_name,
+        "status": "success",
+        "duration": t.duration,
+        "stdout": result.stdout,
+        "stderr": result.stderr
+    }
 
 
 # ============================================================================
@@ -191,9 +192,9 @@ def generate_summary_report(state: Dict[str, Any]) -> str:
 
     # Overall status
     if state.get("status") == "success":
-        summary.append("Status: ✓ SUCCESS")
+        summary.append("Status: [SUCCESS]")
     else:
-        summary.append(f"Status: ✗ FAILED ({state.get('failed_step', 'unknown')})")
+        summary.append(f"Status: [FAILED] ({state.get('failed_step', 'unknown')})")
 
     summary.append(f"Total Duration: {state.get('total_duration', 0):.2f}s")
     summary.append(f"Started: {state.get('start_time', 'N/A')}")
@@ -203,7 +204,7 @@ def generate_summary_report(state: Dict[str, Any]) -> str:
     # Step-by-step results
     summary.append("Step Results:")
     for step in state.get("steps", []):
-        status_symbol = "✓" if step["status"] == "success" else "✗" if step["status"] == "failed" else "○"
+        status_symbol = "[OK]" if step["status"] == "success" else "[FAIL]" if step["status"] == "failed" else "[SKIP]"
         summary.append(
             f"  {status_symbol} Step {step['step']}: {step['name']} "
             f"({step.get('duration', 0):.2f}s) - {step['status'].upper()}"
@@ -352,7 +353,7 @@ Groww App Review Analyzer
 
         # Create message
         msg = MIMEText(body, 'plain', 'utf-8')
-        msg['Subject'] = f"❌ Pipeline Failed - {failed_step}"
+        msg['Subject'] = f"[FAILED] Pipeline Failed - {failed_step}"
         msg['From'] = email_from
         msg['To'] = email_to
         msg['Date'] = formatdate(localtime=True)
@@ -565,11 +566,11 @@ Steps:
             print(summary)
             logger.info(summary)
 
-            logger.info(f"\n✓ Pipeline completed successfully in {total_timer.duration:.2f}s")
+            logger.info(f"\n[SUCCESS] Pipeline completed successfully in {total_timer.duration:.2f}s")
             sys.exit(0)
 
         except PipelineError as e:
-            logger.error(f"\n✗ Pipeline failed: {str(e)}")
+            logger.error(f"\n[FAILED] Pipeline failed: {str(e)}")
             logger.error(f"Total execution time: {total_timer.duration:.2f}s")
 
             # Load and print summary even on failure
@@ -589,7 +590,7 @@ Steps:
             sys.exit(1)
 
         except Exception as e:
-            logger.error(f"\n✗ Unexpected error: {str(e)}")
+            logger.error(f"\n[ERROR] Unexpected error: {str(e)}")
             logger.error(traceback.format_exc())
             sys.exit(1)
 
