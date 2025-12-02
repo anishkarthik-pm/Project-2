@@ -550,6 +550,7 @@ Steps:
         logger.info("Running: Full pipeline (Steps 1-5)")
     logger.info("=" * 70)
 
+    state = None
     with Timer() as total_timer:
         try:
             # Run pipeline
@@ -566,12 +567,8 @@ Steps:
             print(summary)
             logger.info(summary)
 
-            logger.info(f"\n[SUCCESS] Pipeline completed successfully in {total_timer.duration:.2f}s")
-            sys.exit(0)
-
         except PipelineError as e:
             logger.error(f"\n[FAILED] Pipeline failed: {str(e)}")
-            logger.error(f"Total execution time: {total_timer.duration:.2f}s")
 
             # Load and print summary even on failure
             state = load_pipeline_state()
@@ -587,12 +584,18 @@ Steps:
             logger.error("4. Check Gmail App Password is configured correctly")
             logger.error("5. Try running individual steps with --step flag")
 
-            sys.exit(1)
-
         except Exception as e:
             logger.error(f"\n[ERROR] Unexpected error: {str(e)}")
             logger.error(traceback.format_exc())
-            sys.exit(1)
+            state = {"status": "error"}
+
+    # Timer context has exited - now duration is available
+    if state and state.get("status") == "success":
+        logger.info(f"\n[SUCCESS] Pipeline completed successfully in {total_timer.duration:.2f}s")
+        sys.exit(0)
+    else:
+        logger.error(f"Total execution time: {total_timer.duration:.2f}s")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
