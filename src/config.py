@@ -25,12 +25,13 @@ PROMPTS_DIR = PROJECT_ROOT / "prompts"
 # ============================================================================
 # APP CONFIGURATION
 # ============================================================================
-APP_ID = "com.nextbillion.groww"
-APP_NAME = "Groww"
+# Support for generic Play Store app (defaults to Groww)
+APP_ID = os.getenv("APP_PACKAGE_NAME", "com.nextbillion.groww")
+APP_NAME = os.getenv("APP_NAME", "Groww")
 
 # Review fetching
-REVIEW_LANG = "en"
-REVIEW_COUNTRY = "in"
+REVIEW_LANG = os.getenv("REVIEW_LANG", "en")
+REVIEW_COUNTRY = os.getenv("REVIEW_COUNTRY", "in")
 REVIEW_COUNT = 500
 
 # ============================================================================

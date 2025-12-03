@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Store Review Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">Play Store Review Analyzer</h1>
+                <p class="subtitle">AI-powered insights from app reviews</p>
+            </div>
+            <button id="refreshBtn" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84 2 11.4651 2.83509 12.5 4.125" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M12.5 2V4.5H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Refresh Data
+            </button>
+        </header>
+
+        <!-- Bento Grid -->
+        <div class="bento-grid">
+            <!-- Statistics Cards -->
+            <div class="card stats-card">
+                <div class="card-header">
+                    <h3>Total Reviews</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stat-value" id="totalReviews">0</div>
+                    <p class="stat-label" id="dateRange">Loading...</p>
+                </div>
+            </div>
+
+            <div class="card stats-card">
+                <div class="card-header">
+                    <h3>Average Rating</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stat-value" id="avgRating">0.0</div>
+                    <div class="rating-breakdown">
+                        <div class="rating-item">
+                            <span class="rating-label positive">Positive</span>
+                            <span class="rating-count" id="positiveCount">0</span>
+                        </div>
+                        <div class="rating-item">
+                            <span class="rating-label negative">Negative</span>
+                            <span class="rating-count" id="negativeCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Type Distribution Chart -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Review Type Distribution</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="reviewTypeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Theme Distribution Chart -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Theme Distribution</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="themeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- AI Insights Panel -->
+            <div class="card insights-card">
+                <div class="card-header">
+                    <h3>AI Insights</h3>
+                </div>
+                <div class="card-body">
+                    <div id="insightsContent">
+                        <p class="loading-text">Loading insights...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Latest Reviews Table -->
+            <div class="card reviews-card">
+                <div class="card-header">
+                    <h3>Latest Reviews</h3>
+                    <span class="badge" id="reviewCount">0</span>
+                </div>
+                <div class="card-body">
+                    <div class="reviews-table" id="reviewsTable">
+                        <p class="loading-text">Loading reviews...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Play Store Review Analyzer | Last updated: <span id="lastUpdated">Never</span></p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-message">Refreshing data...</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message" id="toastMessage"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

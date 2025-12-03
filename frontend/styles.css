@@ -1,0 +1,496 @@
+/* ============================================================================
+   PLAY STORE REVIEW ANALYZER - BENTO STYLE
+   ============================================================================ */
+
+/* CSS Variables */
+:root {
+    --color-primary: #4A6CF7;
+    --color-primary-dark: #3D5AE1;
+    --color-background: #F5F8FF;
+    --color-card: #FFFFFF;
+    --color-border: #E3E9F7;
+    --color-text: #1F2937;
+    --color-text-secondary: #6B7280;
+    --color-success: #10B981;
+    --color-danger: #EF4444;
+    --color-warning: #F59E0B;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+    --radius: 20px;
+    --radius-sm: 12px;
+
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+}
+
+/* ============================================================================
+   RESET & BASE
+   ============================================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ============================================================================
+   LAYOUT
+   ============================================================================ */
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--color-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+}
+
+.header-content {
+    flex: 1;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.subtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+}
+
+/* ============================================================================
+   BENTO GRID
+   ============================================================================ */
+
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Card Sizes */
+.card {
+    background: var(--color-card);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stats-card {
+    grid-column: span 1;
+}
+
+.chart-card {
+    grid-column: span 2;
+}
+
+.insights-card {
+    grid-column: span 2;
+}
+
+.reviews-card {
+    grid-column: span 4;
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.card-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.card-body {
+    position: relative;
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+}
+
+.btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================================================
+   STATISTICS
+   ============================================================================ */
+
+.stat-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1;
+    margin-bottom: var(--spacing-sm);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.rating-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.rating-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rating-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+
+.rating-label.positive {
+    background: #D1FAE5;
+    color: var(--color-success);
+}
+
+.rating-label.negative {
+    background: #FEE2E2;
+    color: var(--color-danger);
+}
+
+.rating-count {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+/* ============================================================================
+   CHARTS
+   ============================================================================ */
+
+canvas {
+    max-height: 300px;
+}
+
+/* ============================================================================
+   BADGE
+   ============================================================================ */
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 12px;
+}
+
+/* ============================================================================
+   INSIGHTS
+   ============================================================================ */
+
+.insights-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.insight-item {
+    padding: var(--spacing-md);
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--color-primary);
+}
+
+.insight-title {
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.insight-text {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ============================================================================
+   REVIEWS TABLE
+   ============================================================================ */
+
+.reviews-table {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.review-item {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+}
+
+.review-item:hover {
+    background: #E0E7FF;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.review-rating {
+    display: flex;
+    gap: 2px;
+}
+
+.star {
+    color: #F59E0B;
+}
+
+.review-date {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.review-text {
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.5;
+}
+
+.review-meta {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.review-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 6px;
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.review-tag.theme {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+/* ============================================================================
+   LOADING & OVERLAYS
+   ============================================================================ */
+
+.loading-text {
+    text-align: center;
+    color: var(--color-text-secondary);
+    padding: var(--spacing-lg);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    z-index: 1000;
+}
+
+.overlay.active {
+    display: flex;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-message {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   TOAST NOTIFICATIONS
+   ============================================================================ */
+
+.toast {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    background: var(--color-text);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 1001;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast-message {
+    font-weight: 500;
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.footer {
+    text-align: center;
+    padding: var(--spacing-lg);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+    .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stats-card,
+    .chart-card,
+    .insights-card {
+        grid-column: span 1;
+    }
+
+    .reviews-card {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+
+    .header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .bento-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .stats-card,
+    .chart-card,
+    .insights-card,
+    .reviews-card {
+        grid-column: span 1;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+}

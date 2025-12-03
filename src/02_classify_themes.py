@@ -439,6 +439,30 @@ def print_theme_distribution(df: pd.DataFrame) -> None:
     logger.info("=" * 60)
 
 
+def print_review_type_distribution(df: pd.DataFrame) -> None:
+    """
+    Print review type distribution statistics.
+
+    Args:
+        df: DataFrame with review_type column
+    """
+    if 'review_type' not in df.columns:
+        logger.warning("No review_type column found")
+        return
+
+    logger.info("=" * 60)
+    logger.info("REVIEW TYPE DISTRIBUTION")
+    logger.info("=" * 60)
+
+    type_counts = df['review_type'].value_counts().sort_values(ascending=False)
+
+    for review_type, count in type_counts.items():
+        percentage = (count / len(df)) * 100
+        logger.info(f"  {review_type}: {count} ({percentage:.1f}%)")
+
+    logger.info("=" * 60)
+
+
 # ============================================================================
 # OUTPUT
 # ============================================================================
@@ -508,15 +532,45 @@ def main():
                 duration=t.duration
             )
 
-            # Step 3: Classify reviews
-            log_pipeline_step(logger, "Classify Reviews", "START")
+            # Step 3: Classify themes
+            log_pipeline_step(logger, "Classify Themes", "START")
             with Timer() as t:
                 df = classify_reviews(df, model, base_prompt)
 
             log_pipeline_step(
-                logger, "Classify Reviews", "SUCCESS",
+                logger, "Classify Themes", "SUCCESS",
                 duration=t.duration,
                 metadata={"reviews": len(df), "batches": (len(df) + BATCH_SIZE - 1) // BATCH_SIZE}
+            )
+
+            # Step 3.5: Classify review types (new feature)
+            log_pipeline_step(logger, "Classify Review Types", "START")
+            with Timer() as t:
+                from src.models.review_type_classifier import ReviewTypeClassifier
+
+                # Initialize review type classifier
+                review_type_classifier = ReviewTypeClassifier(
+                    api_key=GEMINI_API_KEY,
+                    model_name="gemini-2.0-flash",
+                    temperature=0.1
+                )
+
+                # Prepare reviews for classification
+                reviews_list = [{"content": text} for text in df['content'].tolist()]
+
+                # Classify review types
+                review_types = review_type_classifier.classify_batch(
+                    reviews_list,
+                    batch_size=10
+                )
+
+                # Add to dataframe
+                df['review_type'] = review_types
+
+            log_pipeline_step(
+                logger, "Classify Review Types", "SUCCESS",
+                duration=t.duration,
+                metadata={"reviews": len(df)}
             )
 
             # Step 4: Save results
@@ -536,6 +590,7 @@ def main():
 
             # Print summary
             print_theme_distribution(df)
+            print_review_type_distribution(df)
 
         except Exception as e:
             logger.error(f"Classification failed: {str(e)}", exc_info=True)
