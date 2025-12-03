@@ -8,6 +8,7 @@ Can also be triggered manually via the web dashboard or CLI.
 import logging
 import subprocess
 import sys
+import threading
 from datetime import datetime
 from pathlib import Path
 
@@ -36,8 +37,33 @@ class PipelineScheduler:
         self.is_running = False
         self.last_run = None
         self.last_status = None
+        self.current_thread = None
 
-    def run_pipeline(self, dry_run=False):
+    def run_pipeline_async(self, dry_run=False):
+        """
+        Trigger pipeline execution in a background thread (non-blocking).
+
+        Args:
+            dry_run: If True, run without sending email
+
+        Returns:
+            True if started successfully, False if already running
+        """
+        if self.current_thread and self.current_thread.is_alive():
+            logger.warning("Pipeline is already running, cannot start another instance")
+            return False
+
+        # Start pipeline in background thread
+        self.current_thread = threading.Thread(
+            target=self._run_pipeline_sync,
+            args=(dry_run,),
+            daemon=True
+        )
+        self.current_thread.start()
+        logger.info("Pipeline started in background thread")
+        return True
+
+    def _run_pipeline_sync(self, dry_run=False):
         """
         Execute the pipeline.
 
@@ -101,7 +127,7 @@ class PipelineScheduler:
         )
 
         self.scheduler.add_job(
-            self.run_pipeline,
+            self._run_pipeline_sync,
             trigger=trigger,
             id='weekly_pipeline',
             name='Weekly Review Analysis',
@@ -136,13 +162,18 @@ class PipelineScheduler:
             return job.next_run_time
         return None
 
+    def is_pipeline_running(self):
+        """Check if pipeline is currently executing."""
+        return self.current_thread and self.current_thread.is_alive()
+
     def get_status(self):
         """Get scheduler status."""
         return {
             'is_running': self.is_running,
             'last_run': self.last_run.isoformat() if self.last_run else None,
             'last_status': self.last_status,
-            'next_run': self.get_next_run_time().isoformat() if self.get_next_run_time() else None
+            'next_run': self.get_next_run_time().isoformat() if self.get_next_run_time() else None,
+            'pipeline_running': self.is_pipeline_running()
         }
 
 

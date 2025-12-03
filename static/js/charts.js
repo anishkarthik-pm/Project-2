@@ -247,12 +247,15 @@ function updateSchedulerStatus(scheduler) {
     const schedulerStatus = document.getElementById('schedulerStatus');
     const nextRun = document.getElementById('nextRun');
 
-    // Update status
-    if (scheduler.is_running) {
-        schedulerStatus.textContent = 'Running';
+    // Update status - show if pipeline is currently running
+    if (scheduler.pipeline_running) {
+        schedulerStatus.textContent = 'Pipeline Running...';
+        schedulerStatus.style.color = 'var(--color-info)';
+    } else if (scheduler.is_running) {
+        schedulerStatus.textContent = 'Scheduler Active';
         schedulerStatus.style.color = 'var(--color-success)';
     } else {
-        schedulerStatus.textContent = 'Stopped';
+        schedulerStatus.textContent = 'Scheduler Stopped';
         schedulerStatus.style.color = 'var(--color-text-secondary)';
     }
 
@@ -416,9 +419,6 @@ function updateThemeChart(themes) {
 
 async function triggerPipeline(dryRun = false) {
     try {
-        // Show loading overlay
-        document.getElementById('loadingOverlay').classList.add('active');
-
         const response = await fetch('/api/trigger', {
             method: 'POST',
             headers: {
@@ -433,18 +433,14 @@ async function triggerPipeline(dryRun = false) {
             throw new Error(data.error || 'Failed to trigger pipeline');
         }
 
-        showToast('Pipeline started successfully');
+        showToast('Pipeline started! Check status below.');
 
-        // Refresh data after 2 seconds
-        setTimeout(() => {
-            loadDashboardData();
-            document.getElementById('loadingOverlay').classList.remove('active');
-        }, 2000);
+        // Refresh data immediately to show running status
+        loadDashboardData();
 
     } catch (error) {
         console.error('Error triggering pipeline:', error);
         showToast('Error: ' + error.message, 'error');
-        document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
 

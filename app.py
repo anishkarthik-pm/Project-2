@@ -298,12 +298,25 @@ def api_trigger():
 
         logger.info(f"Manual trigger requested (dry_run={dry_run})")
 
-        # Run pipeline in background
-        scheduler.run_pipeline(dry_run=dry_run)
+        # Check if pipeline is already running
+        if scheduler.is_pipeline_running():
+            return jsonify({
+                'success': False,
+                'error': 'Pipeline is already running'
+            }), 409
+
+        # Run pipeline in background thread (non-blocking)
+        success = scheduler.run_pipeline_async(dry_run=dry_run)
+
+        if not success:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to start pipeline'
+            }), 500
 
         return jsonify({
             'success': True,
-            'message': 'Pipeline triggered successfully',
+            'message': 'Pipeline started in background',
             'dry_run': dry_run
         })
 
