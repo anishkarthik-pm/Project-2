@@ -106,13 +106,19 @@ def get_latest_raw_file() -> Path:
     Raises:
         FileNotFoundError: If no CSV files found
     """
-    csv_files = sorted(RAW_DATA_DIR.glob("reviews_*.csv"))
+    # Get all review CSV files, excluding sample files
+    csv_files = sorted(RAW_DATA_DIR.glob("reviews_20*.csv"))
+
+    # If no date-stamped files, fall back to any reviews_*.csv
+    if not csv_files:
+        csv_files = [f for f in RAW_DATA_DIR.glob("reviews_*.csv") if "sample" not in f.name.lower()]
+        csv_files.sort()
 
     if not csv_files:
         raise FileNotFoundError(f"No review CSV files found in {RAW_DATA_DIR}")
 
     latest_file = csv_files[-1]
-    logger.info(f"Found latest raw file: {latest_file}")
+    logger.info(f"Found latest raw file: {latest_file.name}")
 
     return latest_file
 
@@ -516,7 +522,7 @@ def main():
             # Step 4: Save results
             from datetime import datetime
             today_str = datetime.now().strftime("%Y-%m-%d")
-            output_path = PROCESSED_DATA_DIR / f"reviews_themed_{today_str}.csv"
+            output_path = PROCESSED_DATA_DIR / f"reviews_classified_{today_str}.csv"
 
             log_pipeline_step(logger, "Save Results", "START")
             with Timer() as t:

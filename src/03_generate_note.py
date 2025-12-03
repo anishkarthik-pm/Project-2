@@ -98,18 +98,18 @@ def load_prompt(prompt_name: str) -> str:
 
 def get_latest_themed_file() -> Path:
     """
-    Get the most recent themed CSV file from data/processed directory.
+    Get the most recent classified CSV file from data/processed directory.
 
     Returns:
         Path to latest CSV file
     """
-    csv_files = sorted(PROCESSED_DATA_DIR.glob("reviews_themed_*.csv"))
+    csv_files = sorted(PROCESSED_DATA_DIR.glob("reviews_classified_*.csv"))
 
     if not csv_files:
-        raise FileNotFoundError(f"No themed CSV files found in {PROCESSED_DATA_DIR}")
+        raise FileNotFoundError(f"No classified CSV files found in {PROCESSED_DATA_DIR}")
 
     latest_file = csv_files[-1]
-    logger.info(f"Found latest themed file: {latest_file}")
+    logger.info(f"Found latest classified file: {latest_file.name}")
 
     return latest_file
 
