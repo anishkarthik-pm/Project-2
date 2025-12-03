@@ -174,8 +174,14 @@ def get_recent_logs(max_lines: int = 100) -> List[str]:
         if not log_file.exists():
             return []
 
-        with open(log_file, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
+        # Try UTF-8 first, fall back to cp1252 for Windows, with error handling
+        try:
+            with open(log_file, 'r', encoding='utf-8', errors='replace') as f:
+                lines = f.readlines()
+        except Exception:
+            # Fall back to cp1252 (Windows encoding)
+            with open(log_file, 'r', encoding='cp1252', errors='replace') as f:
+                lines = f.readlines()
 
         # Return last N lines
         return lines[-max_lines:]
