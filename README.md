@@ -9,7 +9,9 @@ Automated weekly analysis of Groww app reviews from Google Play Store using AI-p
 - **Intelligent Summarization**: Generates concise weekly pulse notes (≤250 words) using Gemini Pro
 - **Email Notifications**: Automatically drafts (≤350 words) and sends stakeholder emails via Gmail SMTP
 - **PII Protection**: Removes personally identifiable information from all outputs
-- **Scheduled Execution**: Runs every Monday at 9 AM IST via GitHub Actions
+- **Scheduled Execution**: Runs every Monday at 9 AM IST via APScheduler or GitHub Actions
+- **Web Dashboard**: Clean Bento-style UI with real-time status, charts, and manual trigger
+- **Interactive Visualizations**: Theme distribution charts and review statistics
 
 ## Project Structure
 
@@ -21,8 +23,12 @@ groww-review-analyzer/
 ├── outputs/                # Generated notes and emails
 ├── logs/                   # Execution logs
 ├── prompts/                # AI prompt templates
+├── templates/              # HTML templates for dashboard
+├── static/                 # CSS, JavaScript, and assets
 ├── tests/                  # Unit tests
 ├── main.py                 # Pipeline orchestrator
+├── scheduler.py            # APScheduler for weekly runs
+├── app.py                  # Flask web dashboard
 └── requirements.txt        # Python dependencies
 ```
 
@@ -144,8 +150,37 @@ python -m src.04_draft_email
 python -m src.05_send_email
 ```
 
+### Web Dashboard
+
+Run the interactive web dashboard with real-time status and charts:
+
+```bash
+python app.py
+```
+
+Then open your browser to `http://localhost:5000`
+
+**Dashboard Features**:
+- Real-time pipeline status and execution logs
+- Theme distribution charts with Chart.js
+- Review statistics (total, average rating, date range)
+- Manual pipeline trigger button
+- Scheduler control (start/stop automated weekly runs)
+- Latest weekly note display
+- Auto-refresh every 30 seconds
+
 ### Scheduled Execution
 
+**Option 1: Local Scheduler (APScheduler)**
+```bash
+# Run scheduler as standalone service
+python scheduler.py
+
+# Or start via web dashboard
+# Navigate to http://localhost:5000 and click "Start Scheduler"
+```
+
+**Option 2: GitHub Actions**
 The pipeline runs automatically every Monday at 9:00 AM IST via GitHub Actions.
 
 **Manual trigger**:

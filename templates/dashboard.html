@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groww Review Analyzer - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">Groww Review Analyzer</h1>
+                <p class="subtitle">Automated weekly insights from app reviews</p>
+            </div>
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn btn-secondary">
+                    <span class="btn-icon">&#8635;</span> Refresh
+                </button>
+                <button id="triggerBtn" class="btn btn-primary">
+                    <span class="btn-icon">&#9658;</span> Run Pipeline
+                </button>
+            </div>
+        </header>
+
+        <!-- Bento Grid Layout -->
+        <div class="bento-grid">
+            <!-- Status Card (Large) -->
+            <div class="card card-large" id="statusCard">
+                <div class="card-header">
+                    <h2 class="card-title">Pipeline Status</h2>
+                    <span class="status-badge" id="statusBadge">Loading...</span>
+                </div>
+                <div class="card-body">
+                    <div class="status-info">
+                        <div class="status-item">
+                            <span class="label">Last Run:</span>
+                            <span class="value" id="lastRun">N/A</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Next Run:</span>
+                            <span class="value" id="nextRun">N/A</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Duration:</span>
+                            <span class="value" id="duration">N/A</span>
+                        </div>
+                    </div>
+                    <div class="steps-container" id="stepsContainer">
+                        <!-- Pipeline steps will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="card card-stat">
+                <div class="card-header">
+                    <h3 class="card-title">Total Reviews</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stat-value" id="totalReviews">0</div>
+                    <div class="stat-label" id="dateRange">No data</div>
+                </div>
+            </div>
+
+            <div class="card card-stat">
+                <div class="card-header">
+                    <h3 class="card-title">Average Rating</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stat-value" id="avgRating">0.0</div>
+                    <div class="stat-label">out of 5.0</div>
+                </div>
+            </div>
+
+            <div class="card card-stat">
+                <div class="card-header">
+                    <h3 class="card-title">Top Theme</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stat-value-small" id="topTheme">N/A</div>
+                    <div class="stat-label" id="topThemeCount">0 reviews</div>
+                </div>
+            </div>
+
+            <!-- Theme Distribution Chart (Large) -->
+            <div class="card card-large">
+                <div class="card-header">
+                    <h2 class="card-title">Theme Distribution</h2>
+                </div>
+                <div class="card-body">
+                    <canvas id="themeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Latest Weekly Note (Wide) -->
+            <div class="card card-wide" id="noteCard">
+                <div class="card-header">
+                    <h2 class="card-title">Latest Weekly Note</h2>
+                    <span class="note-date" id="noteDate">N/A</span>
+                </div>
+                <div class="card-body">
+                    <div class="note-content" id="noteContent">
+                        <p class="loading-text">No weekly note available</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scheduler Control -->
+            <div class="card card-medium">
+                <div class="card-header">
+                    <h3 class="card-title">Scheduler Control</h3>
+                </div>
+                <div class="card-body">
+                    <div class="scheduler-info">
+                        <div class="status-item">
+                            <span class="label">Status:</span>
+                            <span class="value" id="schedulerStatus">Unknown</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Schedule:</span>
+                            <span class="value">Every Monday 9:00 AM IST</span>
+                        </div>
+                    </div>
+                    <div class="scheduler-actions">
+                        <button id="startSchedulerBtn" class="btn btn-success btn-block">Start Scheduler</button>
+                        <button id="stopSchedulerBtn" class="btn btn-danger btn-block">Stop Scheduler</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Logs -->
+            <div class="card card-medium">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Logs</h3>
+                    <button id="refreshLogsBtn" class="btn-icon-only">&#8635;</button>
+                </div>
+                <div class="card-body">
+                    <div class="logs-container" id="logsContainer">
+                        <p class="loading-text">Loading logs...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Groww Review Analyzer | Last updated: <span id="lastUpdated">Never</span></p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-message">Running pipeline...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-message" id="toastMessage"></span>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+</body>
+</html>
